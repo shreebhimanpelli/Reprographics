@@ -22,6 +22,9 @@ new-key.json
 *.key.json
 *.pem
 
+# Recovered production bundle (local only)
+.page-bundle.pretty.js
+
 # Scratch / debug scripts
 debug.js
 temp.js

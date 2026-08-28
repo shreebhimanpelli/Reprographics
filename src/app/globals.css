@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --flame-blue: #0a456f;
+  --flame-orange: #f58220;
+  --flame-gold: #fdb515;
+  --flame-ivory: #f7f3eb;
+  --flame-paper: #fffcf6;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100dvh;
+  background: var(--flame-ivory);
+  color: #122433;
+  font-family: var(--font-sans), "Nunito Sans", "Avenir Next", "Segoe UI", sans-serif;
+}
+
+h1,
+h2,
+h3,
+.font-display {
+  font-family: var(--font-display), Cambria, "Libre Baskerville", Georgia, serif;
+}
+
+::selection {
+  background: #0a456f;
+  color: #fff;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #efe8d8;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #0a456f;
+  border-radius: 9999px;
+}
+
+@layer components {
+  .module-card {
+    @apply rounded-2xl border border-flame-blue/10 bg-flame-paper shadow-module;
+  }
+
+  .section-kicker {
+    @apply text-[11px] font-bold uppercase tracking-[0.18em] text-flame-blue;
+  }
+
+  .tap-target {
+    @apply min-h-11 min-w-11;
+  }
+}
+
+@supports (padding: max(0px)) {
+  .pb-safe {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+}
