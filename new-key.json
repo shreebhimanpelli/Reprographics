@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "flame-reprographics-portal",
+  "private_key_id": "6e0e8249c3ff866ece92e306c0553ee62d7a7e96",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCzFOevsrCJKxY2\nlZYJaZrRCLRXRjEZ/5GW95TnTgS6YxxRLBuII1b3h586BEmuH7/vPqJsnsxTasna\njzeYCI0TWW8xiVae9aL9abtJA/aXZRKm2g3Feqv4nB7o08w+nHLXKZlRZ8qgH2i1\n6/Q7h1DuRHFZ4uNHvbifNhQsNj0IP6XFEjigWFLJcVxw6HxoTonLJP0LM8xJpUQN\nS1F7dZ1uPPu+Z265c/BeDrTQFivGdzO5d+Q8tIP9VbPuK/gfDqMWUHF0WLPjPCaY\npt4FckUu0TfrVCLng9fNetEe0c1EyUN4GWC8q9PZbd/itjIr2htUoGMmCwe2UUjg\nqu5BeZMXAgMBAAECggEAEZGt36rkO7c8CRB74i7q8jJGBYBTAn30Rp9bi6XRb1SY\nS2f/lRRo5jf3Nk+Dx88NmxpfmdB3TOfF9E9NepKI/kQtiIQ00ohYYtkKRFhcy1WU\nxhHQFnbs6dZHO6H4mii3JSzLm3tXToZGVTK+iOiQCnaXuEqhVnR8HGj6nN7+9d2k\n8uPgPqcKu1pmwptL5nNW/QAtkEyUh6L+Bp3jXrdVQXGJuPqs2v7NdMzMlPvd1XOR\nsxGYRQvooxrirVYtvYz22VSd4VnceJfnJg2NMZMQXxJLR0+iMLMajU8scnAePNe1\naNFc8gCRvUxLIuTT+UZ14H3q9nEXw2WG2qyk/FtG4QKBgQDm9T0Ey0UUCht16ZLL\noS3ImxUft0yNR4wysiG5yFWHSg+O3CWgTiUSDJfNFGVasCo4Xr13kWcY6EUzJW58\nkJMFlYNWdfpyLEaYVj22sc7SQ5uhPLFJNQhfIuztRmeZFPOQCjWigHxIOBBYy8Kp\n5+vlKa9eI1lftmPxpLtdp70SAwKBgQDGf7jrfWGcfXNweW3EVFxz9pngLO0Co4O1\nRQc9b99MnD8StEcdyxIjpT4nBGR7KOkYAylUe70/7eeY0vZwrHnY8cWmx8hx14eU\nI1OWZmOyqqIk/++GEhWau25hqbpp8qHJc0oswd/0s6Gs1ejX0DVXLU6HZq1lUARg\nTdtiPzNYXQKBgQDIib5O0FUNvmzzqDk/OJdxbT8dR+JfdfWE+2kPUKT7ENKLgBnn\npJLJpkeU2ZXb9cTjJ1gqXwV++gdEDsdtv3b5TUY6J7yrsEgn9BIn9SIZLn0Oto1V\nfIflW4UPzacco7WMp2DE1f2UE6IWB+7h6q/ITran7denpM4JPrk16/TekwKBgQC9\nGbwvC7lL/e9VvTinCr8w8kLRX7tDAkddDy/Aha0zLL6hsQD3DxhuwOMfBH49HlJB\nP/HFvEQkfR5fZsrDuGw0Es/6/OSmH2/X3nepFk3wTcI+gVvMW7odOGYFwE4I1M7w\nPVbyoJgcZGynXPl/b6kBLfZb46NYmwwwOru/MvpVOQKBgHxfPAhH3PWMOnG8u2jW\nxN/Gg/y3SSAW4pZ2HDC+Yk+SvknIlvBAeEYY/pAHdqwkdW50t0xATx9xDxUXonZp\n2/mGS8hd4afwFB7f0g5ihceb3UE2QIyiFzIi8jbkUTJAhWoIgdBKZrWM2jeqTcCR\ndOpycOTYtBc77lUoWcJfE014\n-----END PRIVATE KEY-----\n",
+  "client_email": "reprographics-uploader@flame-reprographics-portal.iam.gserviceaccount.com",
+  "client_id": "111695823659523230631",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/reprographics-uploader%40flame-reprographics-portal.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
