@@ -46,11 +46,16 @@ export function calculatePrice(
   pricing: PricingConfig,
   duplexMode: DuplexMode = "SINGLE",
   paperSize: PaperSize = "A4",
+  adminBillingMode?: "EXEMPT" | "CHARGEABLE",
 ): PriceBreakdown {
   const isExempt =
-    (role === "FACULTY" && pricing.facultyExemption) ||
-    (role === "STAFF" && pricing.staffExemption) ||
-    role === "SUPER_ADMIN";
+    adminBillingMode === "CHARGEABLE"
+      ? false
+      : adminBillingMode === "EXEMPT"
+      ? true
+      : (role === "FACULTY" && pricing.facultyExemption) ||
+        (role === "STAFF" && pricing.staffExemption) ||
+        role === "SUPER_ADMIN";
 
   const totalImpressions = effectivePages * copyCount;
   const paperSheetsConsumed =
