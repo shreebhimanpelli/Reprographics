@@ -27,6 +27,7 @@ import {
   FileText,
   IndianRupee,
   LayoutGrid,
+  Shield,
   Trash2,
   Upload,
 } from "lucide-react";
@@ -53,6 +54,7 @@ export function PrintForm({
   onSuccessDirect,
 }: PrintFormProps) {
   const [items, setItems] = useState<CartItem[]>([]);
+  const [adminBillingMode, setAdminBillingMode] = useState<"EXEMPT" | "CHARGEABLE">("EXEMPT");
   const [submitting, setSubmitting] = useState(false);
   const [progress, setProgress] = useState<{ current: number; total: number } | null>(
     null,
@@ -65,7 +67,7 @@ export function PrintForm({
   );
   const allExempt = items.length > 0 && items.every((item) => item.isExempt);
 
-  const priceItem = (item: CartItem): CartItem => {
+  const priceItem = (item: CartItem, mode = adminBillingMode): CartItem => {
     const effectivePages = countSelectedPages(item.selectedPageRange, item.pageCount);
     const priced = calculatePrice(
       effectivePages,
@@ -75,6 +77,7 @@ export function PrintForm({
       pricingConfig,
       item.duplexMode,
       item.paperSize,
+      currentUser.role === "SUPER_ADMIN" ? mode : undefined,
     );
     return {
       ...item,
@@ -87,9 +90,9 @@ export function PrintForm({
   };
 
   useEffect(() => {
-    setItems((prev) => prev.map((item) => priceItem(item)));
+    setItems((prev) => prev.map((item) => priceItem(item, adminBillingMode)));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentUser.role, pricingConfig]);
+  }, [currentUser.role, pricingConfig, adminBillingMode]);
 
   const patchItem = (id: string, patch: Partial<CartItem>) => {
     setItems((prev) =>
@@ -242,6 +245,43 @@ export function PrintForm({
               {pricingConfig.colorPricePerPage.toFixed(2)}/pg
             </span>
           </div>
+
+          {currentUser.role === "SUPER_ADMIN" && (
+            <div className="p-4 rounded-2xl bg-flame-ivory border border-flame-blue/15 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-flame-blue/10 text-flame-blue border border-flame-blue/15 flex-shrink-0">
+                  <Shield className="w-5 h-5 text-flame-blue" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-flame-ink flex items-center gap-2">
+                    <span>Super Admin Billing Mode</span>
+                    {adminBillingMode === "EXEMPT" ? (
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold">
+                        100% Exempt (₹0.00)
+                      </span>
+                    ) : (
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold">
+                        Standard Chargeable (UPI)
+                      </span>
+                    )}
+                  </p>
+                  <p className="text-[11px] text-flame-muted mt-0.5">
+                    Choose whether this submission is an official exempt order or standard chargeable.
+                  </p>
+                </div>
+              </div>
+              <div className="w-full sm:w-auto flex-shrink-0">
+                <Segmented<"EXEMPT" | "CHARGEABLE">
+                  value={adminBillingMode}
+                  onChange={(mode) => setAdminBillingMode(mode)}
+                  options={[
+                    { id: "EXEMPT", label: "Exempt (₹0.00)" },
+                    { id: "CHARGEABLE", label: "Chargeable (UPI)" },
+                  ]}
+                />
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="space-y-8">
