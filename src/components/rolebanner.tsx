@@ -6,9 +6,9 @@ export function RoleBanner({ role }: { role: UserRole }) {
     case "STUDENT":
       return <Badge tone="blue">Student</Badge>;
     case "FACULTY":
-      return <Badge tone="emerald">Faculty ($0.00)</Badge>;
+      return <Badge tone="emerald">Faculty (₹0.00)</Badge>;
     case "STAFF":
-      return <Badge tone="purple">Staff ($0.00)</Badge>;
+      return <Badge tone="purple">Staff (₹0.00)</Badge>;
     case "REPRO_STAFF":
       return <Badge tone="amber">Repro Staff</Badge>;
     case "REPRO_MANAGER":

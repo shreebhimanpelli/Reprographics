@@ -63,6 +63,37 @@ h3,
   }
 }
 
+/* Custom Dropdown & Option Styling */
+select {
+  background-color: #f7f3eb;
+  color: #122433;
+  cursor: pointer;
+}
+
+select option {
+  background-color: #fffcf6;
+  color: #122433;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+select optgroup {
+  background-color: #ede5d5;
+  color: #0a456f;
+  font-weight: 800;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 8px 10px;
+}
+
+select option:checked {
+  background-color: #0a456f;
+  color: #ffffff;
+  font-weight: 700;
+}
+
 @supports (padding: max(0px)) {
   .pb-safe {
     padding-bottom: max(1rem, env(safe-area-inset-bottom));

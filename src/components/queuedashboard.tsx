@@ -80,8 +80,8 @@ export function QueueDashboard({
   const isStaff = currentUserRole === "REPRO_STAFF" || currentUserRole === "SUPER_ADMIN";
   const roleChip = (role: UserRole) => {
     if (role === "STUDENT") return <Badge tone="blue">Student</Badge>;
-    if (role === "FACULTY") return <Badge tone="emerald">Faculty ($0)</Badge>;
-    if (role === "STAFF") return <Badge tone="purple">Staff ($0)</Badge>;
+    if (role === "FACULTY") return <Badge tone="emerald">Faculty (₹0.00)</Badge>;
+    if (role === "STAFF") return <Badge tone="purple">Staff (₹0.00)</Badge>;
     return <RoleBanner role={role} />;
   };
 
@@ -251,8 +251,8 @@ export function QueueDashboard({
             >
               <option value="ALL">All Roles (Student, Faculty, Staff)</option>
               <option value="STUDENT">Students Only</option>
-              <option value="FACULTY">Faculty Only ($0.00)</option>
-              <option value="STAFF">Staff Only ($0.00)</option>
+              <option value="FACULTY">Faculty Only (₹0.00)</option>
+              <option value="STAFF">Staff Only (₹0.00)</option>
             </select>
           </div>
           <div className="flex items-center justify-start md:justify-end gap-2 text-xs text-flame-muted">

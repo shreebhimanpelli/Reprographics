@@ -21,7 +21,7 @@ export function Field({
 }
 
 export const inputClass =
-  "w-full min-h-11 bg-flame-ivory border border-flame-blue/15 rounded-xl px-3.5 py-2.5 text-sm text-flame-ink placeholder-flame-muted/70 focus:outline-none focus:border-flame-orange font-medium";
+  "w-full min-h-11 bg-flame-ivory border border-flame-blue/15 rounded-xl px-3.5 py-2.5 text-sm text-flame-ink placeholder-flame-muted/70 focus:outline-none focus:border-flame-orange focus:ring-2 focus:ring-flame-orange/20 font-medium transition-all";
 
 export function TextInput(props: InputHTMLAttributes<HTMLInputElement>) {
   return <input {...props} className={cn(inputClass, props.className)} />;
@@ -32,5 +32,10 @@ export function TextArea(props: TextareaHTMLAttributes<HTMLTextAreaElement>) {
 }
 
 export function SelectInput(props: SelectHTMLAttributes<HTMLSelectElement>) {
-  return <select {...props} className={cn(inputClass, props.className)} />;
+  return (
+    <select
+      {...props}
+      className={cn(inputClass, "cursor-pointer font-semibold", props.className)}
+    />
+  );
 }

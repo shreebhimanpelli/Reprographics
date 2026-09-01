@@ -32,14 +32,10 @@ export function BrandMark({
 
   if (variant === "footer") {
     return (
-      <div className={cn("flex flex-col items-center gap-2", className)}>
-        <div className="bg-white rounded-xl p-2 ring-1 ring-flame-blue/10">
-          <img
-            src={FLAME_LOGO_SRC}
-            alt="FLAME University"
-            className="h-14 w-auto object-contain"
-          />
-        </div>
+      <div className={cn("flex flex-col items-center gap-1 text-center", className)}>
+        <p className="text-xs font-bold text-flame-blue tracking-tight">
+          FLAME University Reprographics Portal
+        </p>
         <p className="text-[11px] uppercase tracking-[0.18em] text-flame-muted font-semibold">
           Igniting Minds
         </p>
