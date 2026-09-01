@@ -43,42 +43,40 @@ export function QRCodeModal({
       isOpen={isOpen}
       onClose={onClose}
       title="Portal Access QR Code"
-      subtitle="Scan to access document submission portal"
+      subtitle="Scan with phone camera to open on mobile"
       icon={
-        <div className="w-10 h-10 rounded-2xl bg-white/10 text-flame-gold border border-white/20 flex items-center justify-center">
-          <QrCode className="w-5 h-5" />
+        <div className="w-9 h-9 rounded-xl bg-white/10 text-flame-gold border border-white/20 flex items-center justify-center">
+          <QrCode className="w-4 h-4" />
         </div>
       }
     >
-      <div className="p-6 text-center space-y-5">
-        <div className="inline-flex items-center gap-2 bg-flame-blue/5 text-flame-blue border border-flame-blue/15 px-3.5 py-1.5 rounded-full text-xs font-semibold">
-          <Smartphone className="w-4 h-4 text-flame-orange" />
-          Mobile Print Submission Portal
+      <div className="p-4 sm:p-5 text-center space-y-3.5">
+        <div className="inline-flex items-center gap-1.5 bg-flame-blue/5 text-flame-blue border border-flame-blue/15 px-3 py-1 rounded-full text-xs font-semibold">
+          <Smartphone className="w-3.5 h-3.5 text-flame-orange" />
+          <span>Mobile Print Submission Portal</span>
         </div>
-        <p className="text-xs text-flame-muted max-w-xs mx-auto">
-          Students, Faculty, and Staff can scan this QR code using a smartphone camera to
-          open the submission portal directly.
-        </p>
-        <div className="p-4 bg-white rounded-3xl shadow-sm inline-block border border-flame-blue/10">
+
+        <div className="p-3 bg-white rounded-2xl shadow-sm inline-block border border-flame-blue/10 mx-auto">
           <img
             src={FLAME_LOGO_SRC}
             alt="FLAME University"
-            className="h-16 w-auto mx-auto mb-3 object-contain"
+            className="h-8 w-auto mx-auto mb-1.5 object-contain"
           />
           {qr ? (
             <img
               src={qr}
               alt="FLAME Reprographics QR Code"
-              className="w-56 h-56 mx-auto rounded-xl"
+              className="w-40 h-40 sm:w-44 sm:h-44 mx-auto rounded-lg"
             />
           ) : (
-            <div className="w-56 h-56 flex items-center justify-center text-flame-muted text-xs">
+            <div className="w-40 h-40 sm:w-44 sm:h-44 flex items-center justify-center text-flame-muted text-xs">
               Generating QR Code...
             </div>
           )}
         </div>
-        <div className="bg-flame-ivory p-3 rounded-2xl border border-flame-blue/10 flex items-center justify-between gap-2">
-          <span className="font-mono text-xs text-flame-blue truncate font-semibold">
+
+        <div className="bg-flame-ivory p-2 rounded-xl border border-flame-blue/10 flex items-center justify-between gap-2 max-w-sm mx-auto">
+          <span className="font-mono text-xs text-flame-blue truncate font-semibold pl-2">
             {url}
           </span>
           <button
@@ -90,30 +88,32 @@ export function QRCodeModal({
                 setTimeout(() => setCopied(false), 2000);
               }
             }}
-            className="flex items-center gap-1 min-h-11 bg-flame-blue hover:bg-flame-blue-deep text-white px-3 rounded-xl text-xs font-bold flex-shrink-0"
+            className="flex items-center gap-1 h-8 bg-flame-blue hover:bg-flame-blue-deep text-white px-3 rounded-lg text-xs font-bold flex-shrink-0 transition-colors"
           >
             {copied ? (
-              <Check className="w-3.5 h-3.5 text-flame-gold" />
+              <Check className="w-3 h-3 text-flame-gold" />
             ) : (
-              <Copy className="w-3.5 h-3.5" />
+              <Copy className="w-3 h-3" />
             )}
-            {copied ? "Copied!" : "Copy"}
+            {copied ? "Copied" : "Copy"}
           </button>
         </div>
+
         {onOpenQRScanner && (
           <Button
             variant="accent"
-            className="w-full"
+            className="w-full max-w-sm mx-auto text-xs min-h-10 py-2"
             onClick={() => {
               onClose();
               onOpenQRScanner();
             }}
           >
-            <BarChart3 className="w-4 h-4" />
-            Simulate Scanning & Authenticate via Google SSO
+            <BarChart3 className="w-3.5 h-3.5" />
+            Simulate Scan & Google SSO
           </Button>
         )}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+
+        <div className="grid grid-cols-2 gap-2.5 max-w-sm mx-auto pt-0.5">
           <button
             type="button"
             onClick={() => {
@@ -179,17 +179,17 @@ export function QRCodeModal({
     `);
               popup.document.close();
             }}
-            className="flex items-center justify-center gap-2 min-h-11 bg-flame-ivory hover:bg-flame-gold/20 text-flame-ink font-bold py-2.5 px-4 rounded-xl text-xs border border-flame-blue/10"
+            className="flex items-center justify-center gap-1.5 h-10 bg-flame-ivory hover:bg-flame-gold/20 text-flame-ink font-bold py-2 px-3 rounded-xl text-xs border border-flame-blue/15 transition-colors"
           >
-            <Printer className="w-4 h-4 text-flame-blue" />
+            <Printer className="w-3.5 h-3.5 text-flame-blue" />
             Print Poster
           </button>
           <a
             href={qr}
             download="flame-reprographics-qr.png"
-            className="flex items-center justify-center gap-2 min-h-11 bg-flame-blue hover:bg-flame-blue-deep text-white font-bold py-2.5 px-4 rounded-xl text-xs"
+            className="flex items-center justify-center gap-1.5 h-10 bg-flame-blue hover:bg-flame-blue-deep text-white font-bold py-2 px-3 rounded-xl text-xs transition-colors"
           >
-            <QrCode className="w-4 h-4" />
+            <QrCode className="w-3.5 h-3.5" />
             Download Image
           </a>
         </div>

@@ -236,7 +236,7 @@ export function AdminPanel({
           <div>
             <h3 className="text-sm font-bold uppercase tracking-wider text-flame-blue mb-4 flex items-center gap-2">
               <Shield className="w-4 h-4 text-emerald-600" />
-              Role Exemption Controls ($0.00 Auto-Applied)
+              Role Exemption Controls (₹0.00 Auto-Applied)
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {[
@@ -636,8 +636,8 @@ function roleOptions() {
     <>
       <optgroup label="Print Requestors">
         <option value="STUDENT">Student (UPI Billed)</option>
-        <option value="FACULTY">Faculty ($0.00 Exempt)</option>
-        <option value="STAFF">Staff ($0.00 Exempt)</option>
+        <option value="FACULTY">Faculty (₹0.00 Exempt)</option>
+        <option value="STAFF">Staff (₹0.00 Exempt)</option>
       </optgroup>
       <optgroup label="Reprographics Department">
         <option value="REPRO_STAFF">Repro Staff (Operator)</option>
