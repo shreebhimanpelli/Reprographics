@@ -5,6 +5,8 @@ export const SEED_PRICING: PricingConfig = {
   colorPricePerPage: 10,
   a3BwPricePerPage: 4,
   a3ColorPricePerPage: 20,
+  bindingPrice: 30,
+  laminationPricePerPage: 15,
   duplexMultiplier: 2,
   facultyExemption: true,
   staffExemption: true,

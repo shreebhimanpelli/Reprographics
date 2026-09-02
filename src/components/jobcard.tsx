@@ -6,10 +6,12 @@ import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/cn";
 import type { JobStatus, PaymentStatus, PrintJob, UserRole } from "@/types";
 import {
+  BookOpen,
   CheckCircle2,
   Clock,
   ExternalLink,
   FileText,
+  Layers,
   Mail,
   Play,
   Printer,
@@ -160,6 +162,24 @@ export function JobCard({
           </span>
         </div>
       </div>
+
+      {((job.bindingType && job.bindingType !== "NONE") ||
+        (job.laminationType && job.laminationType !== "NONE")) && (
+        <div className="flex flex-wrap items-center gap-2 -mt-2">
+          {job.bindingType && job.bindingType !== "NONE" && (
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-flame-blue/10 text-flame-blue border border-flame-blue/20 font-bold text-[11px]">
+              <BookOpen className="w-3.5 h-3.5" />
+              Binding: {job.bindingType.replace("_", " ")}
+            </span>
+          )}
+          {job.laminationType && job.laminationType !== "NONE" && (
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-flame-orange/10 text-flame-orange border border-flame-orange/20 font-bold text-[11px]">
+              <Layers className="w-3.5 h-3.5" />
+              Lamination: {job.laminationType.replace("_", " ")}
+            </span>
+          )}
+        </div>
+      )}
 
       <div className="flex flex-wrap items-center justify-between gap-3 text-xs border-t border-b border-flame-blue/10 py-3">
         <button

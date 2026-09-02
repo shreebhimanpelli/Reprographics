@@ -28,6 +28,8 @@ export type PrintType = "BW" | "COLOR";
 export type DuplexMode = "SINGLE" | "DUPLEX";
 export type PaperSize = "A4" | "A3" | "Letter" | "Legal";
 export type Orientation = "PORTRAIT" | "LANDSCAPE";
+export type BindingType = "NONE" | "SPIRAL" | "SOFT_COVER" | "HARD_COVER";
+export type LaminationType = "NONE" | "ALL_PAGES" | "COVER_ONLY";
 export type TabId = "submit" | "my-jobs" | "queue" | "admin" | "analytics";
 
 export interface User {
@@ -49,6 +51,8 @@ export interface PricingConfig {
   colorPricePerPage: number;
   a3BwPricePerPage: number;
   a3ColorPricePerPage: number;
+  bindingPrice: number;
+  laminationPricePerPage: number;
   duplexMultiplier: number;
   facultyExemption: boolean;
   staffExemption: boolean;
@@ -87,6 +91,8 @@ export interface PrintJob {
   orientation: Orientation;
   printType: PrintType;
   duplexMode: DuplexMode;
+  bindingType?: BindingType;
+  laminationType?: LaminationType;
   totalAmount: number;
   paymentStatus: PaymentStatus;
   jobStatus: JobStatus;
@@ -120,6 +126,8 @@ export interface CartItem {
   duplexMode: DuplexMode;
   paperSize: PaperSize;
   orientation: Orientation;
+  bindingType: BindingType;
+  laminationType: LaminationType;
   copyCount: number;
   effectivePages: number;
   paperSheetsConsumed: number;
@@ -144,6 +152,9 @@ export interface LoginResult {
 export interface PriceBreakdown {
   ratePerPage: number;
   totalCost: number;
+  printCost?: number;
+  bindingCost?: number;
+  laminationCost?: number;
   isExempt: boolean;
   totalImpressions: number;
   paperSheetsConsumed: number;

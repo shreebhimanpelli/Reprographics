@@ -376,10 +376,20 @@ export function QueueDashboard({
                               </span>{" "}
                               • {job.duplexMode === "DUPLEX" ? "Duplex" : "Single"}
                             </div>
-                            <div className="mt-1">
+                            <div className="mt-1 flex flex-wrap items-center gap-1.5">
                               <span className="text-[10px] font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
                                 Stock: {paperSheetsForJob(job)} paper sheet(s)
                               </span>
+                              {job.bindingType && job.bindingType !== "NONE" && (
+                                <span className="text-[10px] font-bold text-flame-blue bg-flame-blue/10 px-1.5 py-0.5 rounded border border-flame-blue/20">
+                                  📚 {job.bindingType.replace("_", " ")}
+                                </span>
+                              )}
+                              {job.laminationType && job.laminationType !== "NONE" && (
+                                <span className="text-[10px] font-bold text-flame-orange bg-flame-orange/10 px-1.5 py-0.5 rounded border border-flame-orange/20">
+                                  ✨ Lam: {job.laminationType.replace("_", " ")}
+                                </span>
+                              )}
                             </div>
                           </td>
                           <td className="py-3 px-4 whitespace-nowrap">
