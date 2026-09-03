@@ -1,4 +1,5 @@
-import { applyPaymentSuccess } from "@/lib/server-store";
+import { fulfillPaidJobs } from "@/lib/fulfill-payment";
+import { ensureStoreLoaded } from "@/lib/server-store";
 import {
   isHdfcPaymentSuccess,
   verifyHdfcWebhookAuth,
@@ -6,6 +7,7 @@ import {
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
+  await ensureStoreLoaded();
   if (!verifyHdfcWebhookAuth(request.headers.get("authorization"))) {
     return NextResponse.json({ error: "Unauthorized webhook." }, { status: 401 });
   }
@@ -41,7 +43,7 @@ export async function POST(request: NextRequest) {
         payload.txn_detail?.txn_id ||
         payload.content?.txn_detail?.txn_id ||
         orderId;
-      applyPaymentSuccess(orderId, utr);
+      await fulfillPaidJobs(orderId, utr);
     }
 
     return NextResponse.json({ received: true, orderId, status });

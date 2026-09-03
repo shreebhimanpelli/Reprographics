@@ -1,4 +1,4 @@
-import { getServerStore, upsertPaymentOrder, upsertPrintJobs } from "@/lib/server-store";
+import { ensureStoreLoaded, getServerStore, upsertPaymentOrder, upsertPrintJobs } from "@/lib/server-store";
 import {
   buildUpiIntentUrl,
   createHdfcSession,
@@ -23,6 +23,7 @@ function merchantUpiUrl(vpa: string, payee: string, amount: number, note: string
 }
 
 export async function POST(request: NextRequest) {
+  await ensureStoreLoaded();
   try {
     const body = (await request.json()) as {
       jobIds: string[];

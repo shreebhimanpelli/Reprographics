@@ -40,7 +40,7 @@ import { useEffect, useState, type FormEvent } from "react";
 interface PrintFormProps {
   currentUser: User;
   pricingConfig: PricingConfig;
-  onSubmitJob: (job: NewPrintJobInput) => PrintJob;
+  onSubmitJob: (job: NewPrintJobInput | PrintJob) => PrintJob;
   onProceedToPayment: (jobs: PrintJob[]) => void;
   onSuccessDirect: (jobs: PrintJob[]) => void;
 }
@@ -171,54 +171,51 @@ export function PrintForm({
       for (const item of items) {
         current += 1;
         setProgress({ current, total: items.length });
+        const paymentStatus = item.isExempt ? "EXEMPT" : "PENDING_PAYMENT";
+        const meta = {
+          trackingNumber,
+          userId: currentUser.id,
+          userName: currentUser.name,
+          userEmail: currentUser.email,
+          userRole: currentUser.role,
+          fileName: item.file.name,
+          fileSize: item.file.size,
+          fileType: item.file.type || "document",
+          gdriveFileUrl: "",
+          gdriveFileId: "",
+          pageCount: item.pageCount,
+          selectedPageRange: item.selectedPageRange,
+          effectivePages: item.effectivePages,
+          copyCount: item.copyCount,
+          paperSheetsConsumed: item.paperSheetsConsumed,
+          paperSize: item.paperSize,
+          orientation: item.orientation,
+          printType: item.printType,
+          duplexMode: item.duplexMode,
+          bindingType: item.bindingType,
+          laminationType: item.laminationType,
+          totalAmount: item.totalCost,
+          paymentStatus,
+          jobStatus: "QUEUED",
+        };
         const form = new FormData();
         form.append("file", item.file);
-        form.append("trackingNumber", trackingNumber);
-        form.append("role", currentUser.role);
-        const response = await fetch("/api/drive-upload", {
+        form.append("meta", JSON.stringify(meta));
+        const response = await fetch("/api/jobs", {
           method: "POST",
           body: form,
         });
         const data = await response.json();
         if (!response.ok) {
           throw new Error(
-            `Failed to upload ${item.file.name}: ${data.error || "Unknown error"}`,
+            `Failed to save ${item.file.name}: ${data.error || "Unknown error"}`,
           );
         }
-        const jobStatus = "QUEUED";
-        const paymentStatus = item.isExempt ? "EXEMPT" : "PENDING_PAYMENT";
-        created.push(
-          onSubmitJob({
-            trackingNumber,
-            userId: currentUser.id,
-            userName: currentUser.name,
-            userEmail: currentUser.email,
-            userRole: currentUser.role,
-            fileName: item.file.name,
-            fileSize: item.file.size,
-            fileType: item.file.type || "document",
-            fileDataUrl: item.fileDataUrl,
-            gdriveFileUrl: data.webViewLink,
-            gdriveFileId: data.fileId,
-            pageCount: item.pageCount,
-            selectedPageRange: item.selectedPageRange,
-            effectivePages: item.effectivePages,
-            copyCount: item.copyCount,
-            paperSheetsConsumed: item.paperSheetsConsumed,
-            paperSize: item.paperSize,
-            orientation: item.orientation,
-            printType: item.printType,
-            duplexMode: item.duplexMode,
-            bindingType: item.bindingType,
-            laminationType: item.laminationType,
-            totalAmount: item.totalCost,
-            paymentStatus,
-            jobStatus,
-          }),
-        );
+        created.push(onSubmitJob(data));
       }
       setSubmitting(false);
       setProgress(null);
+      setItems([]);
       if (allExempt) onSuccessDirect(created);
       else onProceedToPayment(created);
     } catch (error) {
@@ -226,7 +223,7 @@ export function PrintForm({
       alert(
         error instanceof Error
           ? error.message
-          : "Failed to upload documents. Please try again.",
+          : "Failed to save documents. Please try again.",
       );
       setSubmitting(false);
       setProgress(null);
@@ -623,7 +620,7 @@ export function PrintForm({
           <div className="flex items-center gap-2 text-[11px] text-white/80 bg-black/15 p-3 rounded-xl border border-white/10 mb-6 font-medium">
             <FileText className="w-4 h-4 text-flame-gold flex-shrink-0" />
             <span>
-              All files automatically save directly to Reprographics Google Drive folder:{" "}
+              All files go to the Reprographics Google Drive folder after payment is confirmed:{" "}
               <span className="font-mono text-flame-gold font-bold">
                 {pricingConfig.gdriveFolderName}
               </span>
@@ -639,7 +636,7 @@ export function PrintForm({
             {submitting ? (
               <span className="flex items-center gap-3">
                 <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                Uploading {progress?.current} of {progress?.total}...
+                Saving {progress?.current} of {progress?.total}...
               </span>
             ) : allExempt ? (
               <>

@@ -1,8 +1,9 @@
-import { getServerStore, replaceServerStore } from "@/lib/server-store";
+import { ensureStoreLoaded, getServerStore, replaceServerStore } from "@/lib/server-store";
 import type { DbPayload } from "@/types";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
+  await ensureStoreLoaded();
   const store = getServerStore();
   return NextResponse.json({
     users: store.users,
@@ -14,14 +15,17 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  const body = (await request.json()) as Partial<DbPayload>;
-  const current = getServerStore();
-  replaceServerStore({
-    users: body.users ?? current.users,
-    printJobs: body.printJobs ?? current.printJobs,
-    pricingConfig: body.pricingConfig ?? current.pricingConfig,
-    emailLogs: body.emailLogs ?? current.emailLogs,
-    paymentOrders: body.paymentOrders ?? current.paymentOrders,
-  });
+  await ensureStoreLoaded();
+  const body = (await request.json()) as Partial<DbPayload> & { replaceAll?: boolean };
+  replaceServerStore(
+    {
+      users: body.users,
+      printJobs: body.printJobs,
+      pricingConfig: body.pricingConfig,
+      emailLogs: body.emailLogs,
+      paymentOrders: body.paymentOrders,
+    },
+    Boolean(body.replaceAll),
+  );
   return NextResponse.json(getServerStore());
 }

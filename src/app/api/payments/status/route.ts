@@ -1,5 +1,6 @@
+import { fulfillPaidJobs } from "@/lib/fulfill-payment";
 import {
-  applyPaymentSuccess,
+  ensureStoreLoaded,
   getPaymentOrder,
   getServerStore,
   upsertPaymentOrder,
@@ -13,6 +14,7 @@ import {
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
+  await ensureStoreLoaded();
   const orderId = request.nextUrl.searchParams.get("orderId");
   if (!orderId) {
     return NextResponse.json({ error: "orderId is required." }, { status: 400 });
@@ -24,9 +26,12 @@ export async function GET(request: NextRequest) {
   }
 
   if (payment.status === "CHARGED") {
-    const jobs = getServerStore().printJobs.filter((job) =>
+    let jobs = getServerStore().printJobs.filter((job) =>
       payment.jobIds.includes(job.id),
     );
+    if (jobs.some((job) => !job.gdriveFileId && job.pendingFileId)) {
+      jobs = await fulfillPaidJobs(orderId, payment.utrReferenceNumber);
+    }
     return NextResponse.json({
       orderId,
       status: "CHARGED",
@@ -49,7 +54,7 @@ export async function GET(request: NextRequest) {
 
     if (isHdfcPaymentSuccess(remoteStatus)) {
       const utr = extractUtrFromOrderStatus(remote);
-      const jobs = applyPaymentSuccess(orderId, utr);
+      const jobs = await fulfillPaidJobs(orderId, utr);
       return NextResponse.json({
         orderId,
         status: "CHARGED",

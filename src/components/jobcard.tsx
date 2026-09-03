@@ -185,10 +185,13 @@ export function JobCard({
         <button
           type="button"
           onClick={() => onViewDriveFile(job)}
-          className="flex items-center gap-2 min-h-11 text-flame-blue hover:text-flame-blue-deep bg-flame-blue/5 hover:bg-flame-blue/10 px-3 rounded-xl border border-flame-blue/15 font-semibold"
+          disabled={!job.gdriveFileId}
+          className="flex items-center gap-2 min-h-11 text-flame-blue hover:text-flame-blue-deep bg-flame-blue/5 hover:bg-flame-blue/10 px-3 rounded-xl border border-flame-blue/15 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <ExternalLink className="w-4 h-4" />
-          View File in Reprographics Google Drive
+          {job.gdriveFileId
+            ? "View File in Reprographics Google Drive"
+            : "Drive file available after payment"}
         </button>
         <div className="flex items-center gap-2 flex-wrap">
           {job.utrReferenceNumber && (
@@ -235,7 +238,8 @@ export function JobCard({
                 Verify Payment
               </button>
             )}
-            {job.jobStatus === "QUEUED" && (
+            {job.jobStatus === "QUEUED" &&
+              (job.paymentStatus === "VERIFIED" || job.paymentStatus === "EXEMPT") && (
               <button
                 type="button"
                 onClick={() => onUpdateStatus(job.id, "IN_PROGRESS", job.paymentStatus)}

@@ -22,7 +22,8 @@ new-key.json
 *.key.json
 *.pem
 
-# Recovered production bundle (local only)
+.data
+public/pdf.worker.min.js
 .page-bundle.pretty.js
 
 # Scratch / debug scripts

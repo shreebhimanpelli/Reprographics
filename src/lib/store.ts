@@ -285,15 +285,19 @@ export function useReproStore() {
       });
       persistUsers(next);
     },
-    createPrintJob: (input: NewPrintJobInput) => {
-      const job: PrintJob = {
-        ...input,
-        id: `job-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
+    createPrintJob: (input: NewPrintJobInput | PrintJob) => {
+      const now = new Date().toISOString();
+      const job: PrintJob =
+        "id" in input && input.id
+          ? { ...input, updatedAt: input.updatedAt || now }
+          : {
+              ...(input as NewPrintJobInput),
+              id: `job-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
+              createdAt: now,
+              updatedAt: now,
+            };
       setPrintJobs((prev) => {
-        const next = [job, ...prev];
+        const next = [job, ...prev.filter((item) => item.id !== job.id)];
         fetch("/api/db", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -362,16 +366,26 @@ export function useReproStore() {
       );
     },
     applyVerifiedPayment: (jobs: PrintJob[]) => {
-      const byId = new Map(jobs.map((job) => [job.id, job]));
-      persistJobs(
-        printJobs.map((job) => (byId.has(job.id) ? byId.get(job.id)! : job)),
-      );
+      const map = new Map(printJobs.map((job) => [job.id, job]));
+      jobs.forEach((job) => map.set(job.id, { ...map.get(job.id), ...job }));
+      persistJobs(Array.from(map.values()));
     },
     sendPickupNotificationEmail,
     persistPricing,
     resetToSeedData: () => {
       persistUsers(SEED_USERS);
-      persistJobs(SEED_JOBS);
+      setPrintJobs(SEED_JOBS);
+      fetch("/api/db", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          replaceAll: true,
+          users: SEED_USERS,
+          printJobs: SEED_JOBS,
+          pricingConfig: SEED_PRICING,
+          emailLogs: SEED_EMAIL_LOGS,
+        }),
+      }).catch(console.error);
       persistPricing(SEED_PRICING);
       persistEmailLogs(SEED_EMAIL_LOGS);
       switchUser(SEED_USERS[0]);

@@ -82,6 +82,7 @@ export interface PrintJob {
   fileDataUrl?: string;
   gdriveFileUrl: string;
   gdriveFileId: string;
+  pendingFileId?: string;
   pageCount: number;
   selectedPageRange: string;
   effectivePages: number;

@@ -100,7 +100,8 @@ export function QueueDashboard({
             Verify
           </button>
         )}
-        {job.jobStatus === "QUEUED" && (
+        {job.jobStatus === "QUEUED" &&
+          (job.paymentStatus === "VERIFIED" || job.paymentStatus === "EXEMPT") && (
           <button
             type="button"
             onClick={() =>
