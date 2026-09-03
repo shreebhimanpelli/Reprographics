@@ -32,6 +32,12 @@ export function replaceServerStore(next: Partial<ServerStore>) {
   };
 }
 
+export function upsertPrintJobs(jobs: PrintJob[]) {
+  const byId = new Map(store.printJobs.map((job) => [job.id, job]));
+  jobs.forEach((job) => byId.set(job.id, job));
+  store.printJobs = Array.from(byId.values());
+}
+
 export function upsertPaymentOrder(order: PaymentOrder) {
   const index = store.paymentOrders.findIndex(
     (item) => item.hdfcOrderId === order.hdfcOrderId,

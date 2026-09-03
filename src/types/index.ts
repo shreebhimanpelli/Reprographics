@@ -181,6 +181,7 @@ export interface PaymentOrder {
   trackingNumber: string;
   amount: number;
   userId: string;
+  customerId: string;
   status: PaymentOrderStatus;
   upiIntentUrl?: string;
   txnUuid?: string;

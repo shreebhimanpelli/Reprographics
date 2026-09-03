@@ -1,36 +1,44 @@
-import { getServerStore, upsertPaymentOrder } from "@/lib/server-store";
+import { getServerStore, upsertPaymentOrder, upsertPrintJobs } from "@/lib/server-store";
 import {
   buildUpiIntentUrl,
   createHdfcSession,
   getHdfcConfig,
   initiateHdfcUpiPay,
   isHdfcConfigured,
+  toHdfcCustomerId,
   toHdfcOrderId,
 } from "@/lib/hdfc-gateway";
-import type { PaymentOrder } from "@/types";
+import type { PaymentOrder, PrintJob } from "@/types";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(request: NextRequest) {
-  if (!isHdfcConfigured()) {
-    return NextResponse.json(
-      {
-        code: "HDFC_NOT_CONFIGURED",
-        error:
-          "HDFC SmartGateway is not configured. Add HDFC_API_KEY, HDFC_MERCHANT_ID, HDFC_PAYMENT_PAGE_CLIENT_ID, and HDFC_RETURN_URL to your environment.",
-      },
-      { status: 503 },
-    );
-  }
+function merchantUpiUrl(vpa: string, payee: string, amount: number, note: string) {
+  const query = new URLSearchParams({
+    pa: vpa,
+    pn: payee,
+    am: amount.toFixed(2),
+    cu: "INR",
+    tn: note.slice(0, 50),
+  });
+  return `upi://pay?${query.toString()}`;
+}
 
+export async function POST(request: NextRequest) {
   try {
     const body = (await request.json()) as {
       jobIds: string[];
+      jobs?: PrintJob[];
       userId: string;
       userEmail: string;
       userPhone?: string;
       trackingNumber: string;
       amount: number;
+      upiVpa?: string;
+      upiPayeeName?: string;
     };
+
+    if (body.jobs?.length) {
+      upsertPrintJobs(body.jobs);
+    }
 
     const store = getServerStore();
     const jobs = store.printJobs.filter((job) => body.jobIds.includes(job.id));
@@ -47,25 +55,40 @@ export async function POST(request: NextRequest) {
     }
 
     const hdfcOrderId = toHdfcOrderId(body.trackingNumber);
-    const customerId = body.userId.replace(/[^a-zA-Z0-9]/g, "").slice(0, 32);
+    const customerId = toHdfcCustomerId(body.userId);
     const amount = expectedAmount.toFixed(2);
     const phone = (body.userPhone || "9999999999").replace(/\D/g, "").slice(-10);
+    const fallbackUrl = merchantUpiUrl(
+      body.upiVpa || store.pricingConfig.upiVpa,
+      body.upiPayeeName || store.pricingConfig.upiPayeeName,
+      expectedAmount,
+      body.trackingNumber,
+    );
 
-    await createHdfcSession({
-      orderId: hdfcOrderId,
-      amount,
-      customerId,
-      customerEmail: body.userEmail,
-      customerPhone: phone,
-      description: `FLAME Reprographics ${body.trackingNumber}`,
-    });
+    let upiIntentUrl = fallbackUrl;
+    let txnUuid: string | undefined;
+    let status: PaymentOrder["status"] = "PENDING";
 
-    const upiResponse = await initiateHdfcUpiPay({
-      orderId: hdfcOrderId,
-      customerId,
-    });
+    if (isHdfcConfigured()) {
+      await createHdfcSession({
+        orderId: hdfcOrderId,
+        amount,
+        customerId,
+        customerEmail: body.userEmail,
+        customerPhone: phone,
+        description: `FLAME Reprographics ${body.trackingNumber}`,
+      });
 
-    const upiIntentUrl = buildUpiIntentUrl(upiResponse.payment?.sdk_params);
+      const upiResponse = await initiateHdfcUpiPay({
+        orderId: hdfcOrderId,
+        customerId,
+      });
+
+      upiIntentUrl = buildUpiIntentUrl(upiResponse.payment?.sdk_params) || fallbackUrl;
+      txnUuid = upiResponse.txn_uuid;
+      status = "PENDING";
+    }
+
     const now = new Date().toISOString();
     const paymentOrder: PaymentOrder = {
       hdfcOrderId,
@@ -73,9 +96,10 @@ export async function POST(request: NextRequest) {
       trackingNumber: body.trackingNumber,
       amount: expectedAmount,
       userId: body.userId,
-      status: "PENDING",
+      customerId,
+      status,
       upiIntentUrl,
-      txnUuid: upiResponse.txn_uuid,
+      txnUuid,
       createdAt: now,
       updatedAt: now,
     };
@@ -86,10 +110,14 @@ export async function POST(request: NextRequest) {
       orderId: hdfcOrderId,
       amount: expectedAmount,
       upiIntentUrl,
-      status: upiResponse.status || "PENDING_VBV",
-      gateway: getHdfcConfig().baseUrl.includes("uat") ? "sandbox" : "production",
+      status: "PENDING_VBV",
+      autoVerify: isHdfcConfigured(),
+      gateway: isHdfcConfigured()
+        ? getHdfcConfig().baseUrl.includes("uat")
+          ? "sandbox"
+          : "production"
+        : "merchant-upi",
       method: "UPI_INTENT",
-      mdr: "zero",
     });
   } catch (error) {
     console.error("HDFC payment create failed:", error);

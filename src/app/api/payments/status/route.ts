@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const remote = await fetchHdfcOrderStatus(orderId, payment.userId);
+    const remote = await fetchHdfcOrderStatus(orderId, payment.customerId || payment.userId);
     const remoteStatus = remote.status;
 
     if (isHdfcPaymentSuccess(remoteStatus)) {

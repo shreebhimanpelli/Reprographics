@@ -39,7 +39,6 @@ export default function HomePage() {
     createPrintJob,
     updateJobStatus,
     deleteJobFilePayload,
-    submitPaymentUTR,
     applyVerifiedPayment,
     sendPickupNotificationEmail,
     persistPricing,
@@ -350,11 +349,6 @@ export default function HomePage() {
         onPaymentSuccess={(paidJobs) => {
           applyVerifiedPayment(paidJobs);
           celebrate(paidJobs);
-        }}
-        onSubmitUTR={(ids, utr, receipt) => {
-          submitPaymentUTR(ids, utr, receipt);
-          const paid = printJobs.filter((job) => ids.includes(job.id));
-          if (paid.length > 0) celebrate(paid);
         }}
       />
       <EmailNotificationModal

@@ -126,6 +126,10 @@ export function toHdfcOrderId(trackingNumber: string) {
   return `${compact}${suffix}`.slice(0, 20);
 }
 
+export function toHdfcCustomerId(userId: string) {
+  return userId.replace(/[^a-zA-Z0-9]/g, "").slice(0, 32) || "FLAMEUSER";
+}
+
 export async function createHdfcSession(input: {
   orderId: string;
   amount: string;
