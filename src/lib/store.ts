@@ -361,6 +361,12 @@ export function useReproStore() {
         ),
       );
     },
+    applyVerifiedPayment: (jobs: PrintJob[]) => {
+      const byId = new Map(jobs.map((job) => [job.id, job]));
+      persistJobs(
+        printJobs.map((job) => (byId.has(job.id) ? byId.get(job.id)! : job)),
+      );
+    },
     sendPickupNotificationEmail,
     persistPricing,
     resetToSeedData: () => {

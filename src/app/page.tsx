@@ -40,6 +40,7 @@ export default function HomePage() {
     updateJobStatus,
     deleteJobFilePayload,
     submitPaymentUTR,
+    applyVerifiedPayment,
     sendPickupNotificationEmail,
     persistPricing,
     resetToSeedData,
@@ -343,8 +344,13 @@ export default function HomePage() {
       <UpiPaymentModal
         isOpen={payOpen}
         jobs={payJobs}
+        currentUser={currentUser}
         pricingConfig={pricingConfig}
         onClose={() => setPayOpen(false)}
+        onPaymentSuccess={(paidJobs) => {
+          applyVerifiedPayment(paidJobs);
+          celebrate(paidJobs);
+        }}
         onSubmitUTR={(ids, utr, receipt) => {
           submitPaymentUTR(ids, utr, receipt);
           const paid = printJobs.filter((job) => ids.includes(job.id));
