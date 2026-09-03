@@ -235,6 +235,22 @@ export function PrintPreviewModal({
                   {pageCount} × {copies} = {pageCount * copies} sheets
                 </span>
               </div>
+              {job.bindingType && job.bindingType !== "NONE" && (
+                <div className="flex justify-between text-[11px]">
+                  <span className="text-flame-muted">Binding</span>
+                  <span className="text-flame-blue font-bold">
+                    {job.bindingType.replace("_", " ")}
+                  </span>
+                </div>
+              )}
+              {job.laminationType && job.laminationType !== "NONE" && (
+                <div className="flex justify-between text-[11px]">
+                  <span className="text-flame-muted">Lamination</span>
+                  <span className="text-flame-orange font-bold">
+                    {job.laminationType.replace("_", " ")}
+                  </span>
+                </div>
+              )}
               <div className="flex justify-between text-[11px]">
                 <span className="text-flame-muted">Amount</span>
                 <span className="text-flame-ink font-bold">

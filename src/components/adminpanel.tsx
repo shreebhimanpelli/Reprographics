@@ -9,9 +9,11 @@ import { Segmented } from "@/components/ui/segmented";
 import { cn } from "@/lib/cn";
 import type { NewUserInput, PricingConfig, User, UserRole, UserStatus } from "@/types";
 import {
+  BookOpen,
   CheckCircle2,
   Download,
   IndianRupee,
+  Layers,
   Save,
   Search,
   Shield,
@@ -54,6 +56,10 @@ export function AdminPanel({
   const [color, setColor] = useState(pricingConfig.colorPricePerPage);
   const [a3Bw, setA3Bw] = useState(pricingConfig.a3BwPricePerPage);
   const [a3Color, setA3Color] = useState(pricingConfig.a3ColorPricePerPage);
+  const [bindingPrice, setBindingPrice] = useState(pricingConfig.bindingPrice ?? 30);
+  const [laminationPrice, setLaminationPrice] = useState(
+    pricingConfig.laminationPricePerPage ?? 15,
+  );
   const [facultyExemption, setFacultyExemption] = useState(pricingConfig.facultyExemption);
   const [staffExemption, setStaffExemption] = useState(pricingConfig.staffExemption);
   const [domains, setDomains] = useState(pricingConfig.allowedDomains.join(", "));
@@ -154,6 +160,8 @@ export function AdminPanel({
               colorPricePerPage: Number(color),
               a3BwPricePerPage: Number(a3Bw),
               a3ColorPricePerPage: Number(a3Color),
+              bindingPrice: Number(bindingPrice),
+              laminationPricePerPage: Number(laminationPrice),
               facultyExemption,
               staffExemption,
               allowedDomains: domains.split(",").map((d) => d.trim()).filter(Boolean),
@@ -230,6 +238,56 @@ export function AdminPanel({
                   <p className="text-[11px] text-flame-muted">{field.hint}</p>
                 </div>
               ))}
+            </div>
+          </div>
+
+          <div>
+            <h3 className="text-sm font-bold uppercase tracking-wider text-flame-blue mb-4 flex items-center gap-2">
+              <Layers className="w-4 h-4 text-flame-orange" />
+              Finishing Services Rates (Binding & Lamination)
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="bg-flame-ivory p-4 rounded-2xl border border-flame-blue/10 space-y-2">
+                <label className="text-xs font-bold text-flame-ink flex items-center gap-1.5">
+                  <BookOpen className="w-4 h-4 text-flame-blue" />
+                  Binding Charge per Book / Copy (₹)
+                </label>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-bold text-flame-muted">₹</span>
+                  <input
+                    type="number"
+                    step="1"
+                    min="0"
+                    value={bindingPrice}
+                    onChange={(event) => setBindingPrice(Number(event.target.value))}
+                    className={cn(inputClass, "font-extrabold bg-flame-paper")}
+                  />
+                </div>
+                <p className="text-[11px] text-flame-muted">
+                  Base flat fee applied per copy for spiral or soft cover binding.
+                </p>
+              </div>
+
+              <div className="bg-flame-ivory p-4 rounded-2xl border border-flame-blue/10 space-y-2">
+                <label className="text-xs font-bold text-flame-ink flex items-center gap-1.5">
+                  <Layers className="w-4 h-4 text-flame-orange" />
+                  Lamination Charge per Page (₹)
+                </label>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-bold text-flame-muted">₹</span>
+                  <input
+                    type="number"
+                    step="1"
+                    min="0"
+                    value={laminationPrice}
+                    onChange={(event) => setLaminationPrice(Number(event.target.value))}
+                    className={cn(inputClass, "font-extrabold bg-flame-paper")}
+                  />
+                </div>
+                <p className="text-[11px] text-flame-muted">
+                  Rate applied per laminated page sheet.
+                </p>
+              </div>
             </div>
           </div>
 

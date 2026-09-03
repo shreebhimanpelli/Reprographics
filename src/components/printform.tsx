@@ -8,24 +8,28 @@ import { cn } from "@/lib/cn";
 import { analyzeDocument } from "@/lib/pdfanalyzer";
 import { calculatePrice, countSelectedPages } from "@/lib/pricecalculator";
 import type {
+  BindingType,
   CartItem,
+  DuplexMode,
+  LaminationType,
   NewPrintJobInput,
   Orientation,
   PaperSize,
   PricingConfig,
   PrintJob,
   PrintType,
-  DuplexMode,
   User,
 } from "@/types";
 import {
   ArrowRight,
+  BookOpen,
   CheckCircle2,
   ChevronDown,
   ChevronUp,
   File,
   FileText,
   IndianRupee,
+  Layers,
   LayoutGrid,
   Shield,
   Trash2,
@@ -78,6 +82,8 @@ export function PrintForm({
       item.duplexMode,
       item.paperSize,
       currentUser.role === "SUPER_ADMIN" ? mode : undefined,
+      item.bindingType || "NONE",
+      item.laminationType || "NONE",
     );
     return {
       ...item,
@@ -110,6 +116,8 @@ export function PrintForm({
       duplexMode: "SINGLE",
       paperSize: "A4",
       orientation: "PORTRAIT",
+      bindingType: "NONE",
+      laminationType: "NONE",
       copyCount: 1,
       effectivePages: 1,
       paperSheetsConsumed: 1,
@@ -201,6 +209,8 @@ export function PrintForm({
             orientation: item.orientation,
             printType: item.printType,
             duplexMode: item.duplexMode,
+            bindingType: item.bindingType,
+            laminationType: item.laminationType,
             totalAmount: item.totalCost,
             paymentStatus,
             jobStatus,
@@ -235,15 +245,22 @@ export function PrintForm({
               New Print Job Submission
             </h2>
           </div>
-          <p className="text-xs text-flame-muted font-medium">
-            Upload multiple documents and configure their print settings.
-          </p>
-          <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-flame-ivory border border-flame-blue/10 text-flame-ink text-xs font-bold self-start">
-            <IndianRupee className="w-4 h-4 text-flame-orange" />
-            <span>
-              B&W: ₹{pricingConfig.bwPricePerPage.toFixed(2)}/pg | Color: ₹
-              {pricingConfig.colorPricePerPage.toFixed(2)}/pg
-            </span>
+          <div className="flex flex-wrap items-center gap-2 text-xs font-bold self-start">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-flame-ivory border border-flame-blue/10 text-flame-ink">
+              <IndianRupee className="w-3.5 h-3.5 text-flame-orange" />
+              <span>
+                B&W: ₹{pricingConfig.bwPricePerPage.toFixed(2)}/pg | Color: ₹
+                {pricingConfig.colorPricePerPage.toFixed(2)}/pg
+              </span>
+            </div>
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-flame-ivory border border-flame-blue/10 text-flame-ink">
+              <BookOpen className="w-3.5 h-3.5 text-flame-blue" />
+              <span>Binding: ₹{pricingConfig.bindingPrice ?? 30}/copy</span>
+            </div>
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-flame-ivory border border-flame-blue/10 text-flame-ink">
+              <Layers className="w-3.5 h-3.5 text-flame-orange" />
+              <span>Lamination: ₹{pricingConfig.laminationPricePerPage ?? 15}/pg</span>
+            </div>
           </div>
 
           {currentUser.role === "SUPER_ADMIN" && (
@@ -364,6 +381,16 @@ export function PrintForm({
                             {(item.file.size / 1024 / 1024).toFixed(2)} MB •{" "}
                             {item.pageCount} page(s) • {item.printType} • {item.copyCount}{" "}
                             copy(ies)
+                            {item.bindingType && item.bindingType !== "NONE" && (
+                              <span className="text-flame-blue font-bold">
+                                {" "}• {item.bindingType.replace("_", " ")}
+                              </span>
+                            )}
+                            {item.laminationType && item.laminationType !== "NONE" && (
+                              <span className="text-flame-orange font-bold">
+                                {" "}• Lam: {item.laminationType.replace("_", " ")}
+                              </span>
+                            )}
                           </p>
                         </div>
                       </div>
@@ -408,7 +435,7 @@ export function PrintForm({
                             </p>
                           </div>
                         ) : (
-                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
                             <div className="space-y-2">
                               <span className="text-xs font-bold text-flame-ink">
                                 Paper Size
@@ -482,7 +509,7 @@ export function PrintForm({
                                 </button>
                               </div>
                             </div>
-                            <div className="space-y-2 sm:col-span-2">
+                            <div className="space-y-2">
                               <span className="text-xs font-bold text-flame-ink">
                                 Page Range
                               </span>
@@ -510,6 +537,37 @@ export function PrintForm({
                                 options={[
                                   { id: "PORTRAIT", label: "Portrait" },
                                   { id: "LANDSCAPE", label: "Landscape" },
+                                ]}
+                              />
+                            </div>
+                            <div className="space-y-2 sm:col-span-2">
+                              <span className="text-xs font-bold text-flame-ink flex items-center gap-1.5">
+                                <BookOpen className="w-3.5 h-3.5 text-flame-blue" />
+                                Binding Service
+                              </span>
+                              <Segmented<BindingType>
+                                value={item.bindingType || "NONE"}
+                                onChange={(bindingType) => patchItem(item.id, { bindingType })}
+                                options={[
+                                  { id: "NONE", label: "None" },
+                                  { id: "SPIRAL", label: `Spiral (₹${pricingConfig.bindingPrice ?? 30})` },
+                                  { id: "SOFT_COVER", label: `Soft (₹${pricingConfig.bindingPrice ?? 30})` },
+                                  { id: "HARD_COVER", label: `Hard (₹${Math.round((pricingConfig.bindingPrice ?? 30) * 1.5)})` },
+                                ]}
+                              />
+                            </div>
+                            <div className="space-y-2 sm:col-span-2">
+                              <span className="text-xs font-bold text-flame-ink flex items-center gap-1.5">
+                                <Layers className="w-3.5 h-3.5 text-flame-orange" />
+                                Lamination Service
+                              </span>
+                              <Segmented<LaminationType>
+                                value={item.laminationType || "NONE"}
+                                onChange={(laminationType) => patchItem(item.id, { laminationType })}
+                                options={[
+                                  { id: "NONE", label: "None" },
+                                  { id: "ALL_PAGES", label: `All Pgs (₹${pricingConfig.laminationPricePerPage ?? 15}/pg)` },
+                                  { id: "COVER_ONLY", label: `Covers (₹${(pricingConfig.laminationPricePerPage ?? 15) * 2})` },
                                 ]}
                               />
                             </div>
