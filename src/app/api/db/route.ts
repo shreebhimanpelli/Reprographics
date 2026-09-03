@@ -1,30 +1,27 @@
-import {
-  SEED_EMAIL_LOGS,
-  SEED_JOBS,
-  SEED_PRICING,
-  SEED_USERS,
-} from "@/lib/initialdata";
+import { getServerStore, replaceServerStore } from "@/lib/server-store";
 import type { DbPayload } from "@/types";
 import { NextRequest, NextResponse } from "next/server";
 
-let store: DbPayload = {
-  users: [...SEED_USERS],
-  printJobs: [...SEED_JOBS],
-  pricingConfig: { ...SEED_PRICING },
-  emailLogs: [...SEED_EMAIL_LOGS],
-};
-
 export async function GET() {
-  return NextResponse.json(store);
+  const store = getServerStore();
+  return NextResponse.json({
+    users: store.users,
+    printJobs: store.printJobs,
+    pricingConfig: store.pricingConfig,
+    emailLogs: store.emailLogs,
+    paymentOrders: store.paymentOrders,
+  });
 }
 
 export async function POST(request: NextRequest) {
   const body = (await request.json()) as Partial<DbPayload>;
-  store = {
-    users: body.users ?? store.users,
-    printJobs: body.printJobs ?? store.printJobs,
-    pricingConfig: body.pricingConfig ?? store.pricingConfig,
-    emailLogs: body.emailLogs ?? store.emailLogs,
-  };
-  return NextResponse.json(store);
+  const current = getServerStore();
+  replaceServerStore({
+    users: body.users ?? current.users,
+    printJobs: body.printJobs ?? current.printJobs,
+    pricingConfig: body.pricingConfig ?? current.pricingConfig,
+    emailLogs: body.emailLogs ?? current.emailLogs,
+    paymentOrders: body.paymentOrders ?? current.paymentOrders,
+  });
+  return NextResponse.json(getServerStore());
 }

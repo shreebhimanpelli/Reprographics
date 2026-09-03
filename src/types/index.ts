@@ -154,4 +154,26 @@ export interface DbPayload {
   printJobs: PrintJob[];
   pricingConfig: PricingConfig;
   emailLogs: EmailLog[];
+  paymentOrders?: PaymentOrder[];
+}
+
+export type PaymentOrderStatus =
+  | "CREATED"
+  | "PENDING"
+  | "CHARGED"
+  | "FAILED"
+  | "EXPIRED";
+
+export interface PaymentOrder {
+  hdfcOrderId: string;
+  jobIds: string[];
+  trackingNumber: string;
+  amount: number;
+  userId: string;
+  status: PaymentOrderStatus;
+  upiIntentUrl?: string;
+  txnUuid?: string;
+  utrReferenceNumber?: string;
+  createdAt: string;
+  updatedAt: string;
 }
