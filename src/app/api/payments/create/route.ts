@@ -1,17 +1,10 @@
-import {
-  getPaymentOrder,
-  getServerStore,
-  upsertPaymentOrder,
-} from "@/lib/server-store";
+import { getServerStore, upsertPaymentOrder } from "@/lib/server-store";
 import {
   buildUpiIntentUrl,
   createHdfcSession,
-  extractUtrFromOrderStatus,
-  fetchHdfcOrderStatus,
   getHdfcConfig,
   initiateHdfcUpiPay,
   isHdfcConfigured,
-  isHdfcPaymentSuccess,
   toHdfcOrderId,
 } from "@/lib/hdfc-gateway";
 import type { PaymentOrder } from "@/types";
@@ -95,6 +88,8 @@ export async function POST(request: NextRequest) {
       upiIntentUrl,
       status: upiResponse.status || "PENDING_VBV",
       gateway: getHdfcConfig().baseUrl.includes("uat") ? "sandbox" : "production",
+      method: "UPI_INTENT",
+      mdr: "zero",
     });
   } catch (error) {
     console.error("HDFC payment create failed:", error);

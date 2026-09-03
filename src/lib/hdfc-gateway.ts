@@ -69,6 +69,26 @@ export function isHdfcConfigured() {
   );
 }
 
+/** UPI intent/QR only — no cards, net banking, or wallets (those carry MDR). */
+export const UPI_ONLY_PAYMENT_FILTER = {
+  allowDefaultOptions: false,
+  options: [
+    {
+      paymentMethodType: "UPI",
+      enable: true,
+      upiFilters: [
+        { upiType: "INTENT", enable: true },
+        { upiType: "COLLECT", enable: false },
+      ],
+    },
+    { paymentMethodType: "CARD", enable: false },
+    { paymentMethodType: "NB", enable: false },
+    { paymentMethodType: "WALLET", enable: false },
+    { paymentMethodType: "CONSUMER_FINANCE", enable: false },
+    { paymentMethodType: "REWARD", enable: false },
+  ],
+};
+
 export function getHdfcConfig(): HdfcGatewayConfig {
   const sandbox = process.env.HDFC_ENV !== "production";
   return {
@@ -131,6 +151,7 @@ export async function createHdfcSession(input: {
       description: input.description || "FLAME Reprographics print job",
       first_name: input.customerEmail.split("@")[0] || "Student",
       last_name: "FLAME",
+      payment_filter: UPI_ONLY_PAYMENT_FILTER,
     }),
   });
 

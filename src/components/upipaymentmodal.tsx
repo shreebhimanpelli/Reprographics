@@ -76,6 +76,11 @@ export function UpiPaymentModal({
   }, []);
 
   useEffect(() => {
+    if (!isOpen || !isMobile || !upiIntentUrl) return;
+    window.location.href = upiIntentUrl;
+  }, [isOpen, isMobile, upiIntentUrl]);
+
+  useEffect(() => {
     if (!isOpen || jobs.length === 0) return;
 
     let cancelled = false;
@@ -168,6 +173,7 @@ export function UpiPaymentModal({
   useEffect(() => {
     if (!isOpen || !useLegacyFlow || jobs.length === 0) return;
     const uri = `upi://pay?pa=${pricingConfig.upiVpa}&pn=${encodeURIComponent(pricingConfig.upiPayeeName)}&am=${total.toFixed(2)}&cu=INR`;
+    setUpiIntentUrl(uri);
     QRCode.toDataURL(uri, {
       width: 280,
       margin: 2,
@@ -183,7 +189,7 @@ export function UpiPaymentModal({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="HDFC PayZapp Payment"
+      title="Pay with UPI"
       subtitle={
         <>
           Tracking ID:{" "}
@@ -240,16 +246,17 @@ export function UpiPaymentModal({
           <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-flame-blue/10 border border-flame-blue/15 rounded-full mx-auto">
             <div className="w-2 h-2 rounded-full bg-flame-orange animate-pulse" />
             <span className="text-xs font-extrabold text-flame-blue tracking-wide">
-              HDFC SmartGateway • Dynamic UPI QR
+              Bank UPI • Zero transaction fee
             </span>
           </div>
 
+          {!isMobile && (
           <div className="bg-white p-3 rounded-3xl inline-block shadow-sm border-4 border-flame-gold/40 relative max-w-[280px]">
             {qr ? (
               <div>
                 <img
                   src={qr}
-                  alt="HDFC PayZapp Dynamic QR Code"
+                  alt="UPI QR Code"
                   className="w-56 h-56 mx-auto rounded-xl"
                 />
                 <div className="mt-1.5 space-y-0.5">
@@ -257,7 +264,7 @@ export function UpiPaymentModal({
                     FLAME UNIVERSITY PUNE
                   </p>
                   <div className="text-[10px] font-extrabold text-flame-ink bg-flame-gold/30 py-1 rounded-lg">
-                    PayZapp @ HDFC BANK • TID NO. 65015664
+                    Pay with UPI from your bank account
                   </div>
                 </div>
               </div>
@@ -267,6 +274,7 @@ export function UpiPaymentModal({
               </div>
             )}
           </div>
+          )}
 
           {upiIntentUrl && isMobile && (
             <Button
@@ -277,7 +285,7 @@ export function UpiPaymentModal({
               }}
             >
               <Smartphone className="w-4 h-4" />
-              Pay with GPay / UPI App
+              Open UPI app
               <ExternalLink className="w-4 h-4" />
             </Button>
           )}
@@ -287,10 +295,11 @@ export function UpiPaymentModal({
             <span className="text-sm font-black text-flame-ink">₹{total.toFixed(2)}</span>
           </div>
           <div className="text-[11px] text-flame-muted font-semibold">
-            Scan & Pay via:{" "}
+            Pay from a bank account in{" "}
             <span className="font-mono text-flame-blue">
-              GPay • PhonePe • PayZapp • Paytm • Amazon Pay
+              GPay • PhonePe • Paytm UPI
             </span>
+            . Do not use card or wallet balance.
           </div>
           <div className="flex items-center justify-center gap-2 text-xs flex-wrap">
             <span className="text-flame-muted">UPI ID:</span>
@@ -444,8 +453,8 @@ export function UpiPaymentModal({
 
         {!useLegacyFlow && (
           <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-xs text-emerald-800">
-            Keep this screen open after paying. Your queue status will update automatically
-            once HDFC confirms the UPI payment.
+            Keep this screen open after paying. Status updates when UPI from your bank
+            account is confirmed. Card and wallet payments are not accepted.
           </div>
         )}
       </div>
